@@ -14,6 +14,14 @@ pipeline {
                   app = docker.build("${env.IMAGE_REPO}")
                }
             }
+	    post {
+                success {
+                    echo 'success : docker build'
+                }
+                failure {
+                    error 'fail : docker build'
+                }
+            }
          }
          stage('Push Image') {
             steps {
@@ -23,7 +31,14 @@ pipeline {
                         app.push(IMAGE_VERSION)
                         app.push("latest")
                     }
-		    echo "pushed image --> ${env.IMAGE_REPO}:${IMAGE_VERSION} "
+                }
+		post {
+                   success {
+                       echo 'success : push image ${env.IMAGE_REPO}:${IMAGE_VERSION}'
+                   }
+                   failure {
+                       error 'fail : push image'
+                   }
                 }
             }
          }
