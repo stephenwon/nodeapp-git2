@@ -23,9 +23,28 @@ pipeline {
                         app.push(IMAGE_VERSION)
                         app.push("latest")
                     }
-		    echo "${env.IMAGE_REPO}:${IMAGE_VERSION} pushed"
+		    echo "pushed image --> ${env.IMAGE_REPO}:${IMAGE_VERSION} "
                 }
             }
          }
+	 stage('update image tag in k8s manifest') {
+            steps {
+               script {
+		   withCredentials([gitUsernamePassword(credentialsId: 'github-cred')]) {
+                      sh "rm -rf *"
+	              sh "rm -rf .git"
+	              sh "git clone https://github.com/stephenwon/k8s-infra2 ."
+	
+	              sh "git config user.email jenkins@example.com"
+	              sh "git config user.name jenkins"
+	              sh """sed -i 's|nodeapp-git2:.*|nodeapp-git2:${IMAGE_VERSION}|' clusters/mycluster/nodeapp-deploy.yaml"""
+	              sh "cat clusters/mycluster/nodeapp-deploy.yaml"
+	  
+	              sh "git commit -am 'Update image tag' && git push https://github.com/stephenwon/k8s-infra2"
+	              echo "Pushed image ${IMAGE_VERSION}"
+		   }
+	       }
+	    }
+	 }
     }
 }
