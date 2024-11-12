@@ -12,15 +12,8 @@ pipeline {
                script {
                   echo "${env.IMAGE_REPO}"
                   app = docker.build("${env.IMAGE_REPO}")
+		  echo 'success : docker build - ${env.IMAGE_REPO}'
                }
-            }
-	    post {
-                success {
-                    echo 'success : docker build'
-                }
-                failure {
-                    error 'fail : docker build'
-                }
             }
          }
          stage('Push Image') {
@@ -31,14 +24,7 @@ pipeline {
                         app.push(IMAGE_VERSION)
                         app.push("latest")
                     }
-                }
-		post {
-                   success {
-                       echo 'success : push image ${env.IMAGE_REPO}:${IMAGE_VERSION}'
-                   }
-                   failure {
-                       error 'fail : push image'
-                   }
+	            echo 'success : push image ${env.IMAGE_REPO}:${IMAGE_VERSION}'
                 }
             }
          }
