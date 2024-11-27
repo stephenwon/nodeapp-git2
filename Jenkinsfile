@@ -39,7 +39,7 @@ pipeline {
 	              sh "git config user.email jenkins@example.com"
 	              sh "git config user.name jenkins"
 	              sh """sed -i 's|nodeapp-git2:.*|nodeapp-git2:${IMAGE_VERSION}|' clusters/mycluster/nodeapp-deploy.yaml"""
-		      sh """sed -i 's|#timestamp:.*|#timestamp:${BUILD_TIMESTAMP}|' """
+		      sh """sed -i 's|#timestamp:.*|#timestamp:${BUILD_TIMESTAMP}|' clusters/mycluster/nodeapp-deploy.yaml"""
 	              sh "cat clusters/mycluster/nodeapp-deploy.yaml"
 	  
 	              sh "git commit -am 'Update image tag' && git push https://github.com/stephenwon/k8s-infra2"
